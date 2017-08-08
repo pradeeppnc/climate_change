@@ -1,0 +1,18 @@
+Climate_change = read.csv(choose.files())
+Climate_change_training = subset(Climate_change, Climate_change$Year <= 2006)
+Climate_change_test = subset(Climate_change, Climate_change$Year > 2006)
+str(Climate_change_test)
+TempReg = lm(Temp ~ MEI + CO2 + CH4 + N2O + CFC.11 + CFC.12 + TSI + Aerosols, data = Climate_change_training )
+summary(TempReg)
+cor(Climate_change_training$Temp, Climate_change_training$N2O)
+cor(Climate_change_training$Temp, Climate_change_training$CFC.11)
+cor(Climate_change_training)
+TempReg2 = lm(Temp ~ MEI + N2O + TSI + Aerosols, data = Climate_change_training )
+summary(TempReg2)
+TempRegStep =step(lm(Temp ~ MEI + CO2 + CH4 + N2O + CFC.11 + CFC.12 + TSI + Aerosols, data = Climate_change_training), direction = "both")
+summary(TempRegStep)
+TempPredictions = predict(TempRegStep, newdata = Climate_change_test)
+SSE = sum((TempPredictions - Climate_change_test$Temp)^2)
+SST = sum((mean(Climate_change_training$Temp) - Climate_change_test$Temp)^2)
+R2 = 1 - SSE/SST
+R2
